@@ -3,7 +3,7 @@
 - 所见即所得---jquery开发(boostrap提供webfont)
 - 符合大部分文本编辑器的UI操作(WPS等)，简单易用
 - 注释完整，适合大部分学习者学习
-- ![](read_files/1.jpg)
+- ![](https://github.com/xxx407410849/Leditor/blob/master/README/Leditor.png)
 - 求请star
 
 ## 下载
