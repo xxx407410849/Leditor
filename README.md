@@ -1,17 +1,17 @@
-#Leditor
-#轻量级的富文本编辑器
+# Leditor
+# 轻量级的富文本编辑器
 - 所见即所得---jquery开发(boostrap提供webfont)
 - 符合大部分文本编辑器的UI操作(WPS等)，简单易用
 - 注释完整，适合大部分学习者学习
 - ![](read_files/1.jpg)
 - 求请star
 
-##下载
+## 下载
 
 - 直接下载demo[](https://github.com/xxx407410849/Leditor)
 - 注意完整下载所有文件夹
 
-##使用
+## 使用
 
 - 在项目中添加Leditor.css
 - 在HTML中添加
@@ -70,12 +70,12 @@
 ```
 - 请参照demo
 
-##demo
+## demo
 
 - 下载 [](https://github.com/xxx407410849/Leditor) 完整文件
 - 直接运行即可
 
-##关于作者
+## 关于作者
 
 - 作者是一个大学生，如有修改意见以及Bug反馈请直接在 [github issues](https://github.com/xxx407410849/Leditor/issues) 提交问题
 - 给我颗星星就是最好的奖励和支持,以及推进我修改的动力哦
