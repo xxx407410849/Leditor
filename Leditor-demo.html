@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<link rel="stylesheet" href="plugin/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/Leditor.css" />
+
+
+	<body>
+		<div class="editor">
+			<div class="editor-nav">
+				<div class="menu-icon">
+					<i class="glyphicon-font" id="fontName"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-bold" id="blod"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-pencil" id="pencil"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-italic" id="italic"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-text-size" id="fontSize"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-text-color" id="foreColor"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-text-background" id="hiliteColor"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-header" id="formatBlock"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-console" id="code"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-align-justify" id="align"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-picture" id="pic"></i>
+				</div>
+				<div class="menu-icon">
+					<i class="glyphicon-link" id="link"></i>
+				</div>
+			</div>
+			<div class="editor-body" contenteditable="true">
+				<p>欢迎使用Leditor</p>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="plugin/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="js/Leditor.js" ></script>
+	<script>
+		var E = window.Leditor;
+		var editor = new E($('.editor-body'),$('.editor-nav'));
+		editor.creat();
+	</script>
+</html>
