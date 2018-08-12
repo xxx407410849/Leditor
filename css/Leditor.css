@@ -21,6 +21,7 @@ h6 {
   margin: 0 auto;
   height: 500px;
   position: relative;
+	font-family: "微软雅黑";
 }
 .editor-nav {
   background-color: #f8f8f8;
@@ -317,4 +318,63 @@ h6 {
   left: 50%;
   top: 0;
   cursor: ns-resize;
+}
+blockquote {
+	border-left: 5px solid #66AFE9;
+	background-color: #F5F5F5;
+}
+.article-line {
+	width: 100%;
+	height: 1px;
+	margin: 10px 0;
+	background-color: #8C8C8C;
+}
+p{
+	margin: 10px 0px;
+	font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+	line-height: 1.5;
+	font-size: 14px;
+	font-weight: 100;
+}
+a {
+	color: #C0A16B;
+	cursor: pointer;
+}
+
+a:hover {
+	color: #AC2925;
+	text-decoration: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+h1 {
+	font-size: 30px;
+}
+
+h2 {
+	font-size: 27px;
+}
+
+h3 {
+	font-size: 24px;
+}
+
+h4 {
+	font-size: 21px;
+}
+
+h5 {
+	font-size: 18px;
+}
+
+h6 {
+	font-size: 16px;
 }
