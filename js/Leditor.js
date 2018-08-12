@@ -8,9 +8,10 @@
             '<br/>');
     };
     // 获取一个 elem.childNodes 的 JSON 数据
+	//传入 $('.editor-body')
     function getChildrenJSON($elem) {
         var result = [];
-        var $children = $elem.childNodes() || []; // 注意 childNodes() 可以获取文本节点
+        var $children = $elem[0].childNodes || []; // 注意 childNodes() 可以获取文本节点
         $children.forEach(function (curElem) {
             var elemResult = void 0;
             var nodeType = curElem.nodeType;
@@ -63,13 +64,14 @@
     //框架
     //-----config 
     var headConfig = ["H1", "H2", "H3", "H4", "H5", "H6"];
-    var fontColorConfig = ['#000000', '#eeece0', '#1c487f', '#4d80bf', '#c24f4a', '#8baa4a', '#7b5ba1', '#46acc8',
+    var fontColorConfig = ['#000000', '#eeece0', '#1c487f', '#4d80bf', '#c24f4a', '#8baa4a', '#FFFFFF', '#46acc8',
         '#f9963b'
     ];
     var backgroundColorConfig = [];
     var fontSizeConfig = ['xx-small', 'x-small', 'small', 'normal', 'large', 'x-large', 'xx-large'];
-    var fontNameConfig = ['宋体', '新宋体', '微软雅黑', '楷体', 'Arial', 'Consolas', 'Tahoma'];
+    var fontNameConfig = ['宋体', '新宋体', '微软雅黑', '楷体', 'Arial', 'Consolas', 'Tahoma','inherit'];
     var alignConfig = ['left', 'center', 'right'];
+	pencilConfig = ['Through','Quote','Under','Line'];
     //存储init的List对象
     var ListElem = [];
     //选框,传入$(elem)
@@ -84,7 +86,48 @@
             var $elem = this.$elem;
             var chooseId = $elem[0].firstElementChild.id;
             var Leditor = this.Leditor;
+			console.log(chooseId);
             switch (chooseId) {
+				//工具条
+				case "pencil":
+					if (!hoverCheck[pencil]) {
+						console.log(1);
+						//加入Dom
+						var $ul = $("<ul class='chooseList'></ul>");
+						$elem.append($ul);
+						//加入li
+						pencilConfig.forEach(function (item, index) {
+							var $li = $("<li class='chooseItem'></li>");
+							//加入Item
+							var $chooseItem = $("<span class='"+ item +"'>" + item +"</span>");
+							//绑定Item的onClick事件
+							//工具条独特
+							$chooseItem.on("click", function (e) {
+								if (!(typeof (navChooseConstructor[item]) ===
+										"function")) {
+									return;
+								}
+								var chooseFn = new navChooseConstructor[item](Leditor);
+								//判断是否无选区
+								if (Leditor.selection.getRangeElem() == null) {
+									return;
+								}
+								chooseFn.onClick(e);
+								//试图改变状态
+								if (typeof (chooseFn.changeActive) === "function") {
+									chooseFn.changeActive();
+								}
+							});
+							$li.append($chooseItem);
+							$ul.append($li);
+						});
+						//修改css
+						$ul.css("width", "100px");
+						ListElem.pencil = $ul;
+						//得到父节点
+						//console.log($elem);
+					};
+					break;
                 //标题
                 case "formatBlock":
                     //检查加载情况,失效,定义在后面
@@ -373,7 +416,6 @@
                         "<div class='ipt-body'><input class='ipt-text' type='text' placeholder='标签文字'/></td>  <input class='ipt-link' type='text' placeholder='http://...'/>   <div class='ipt-btn-body'><div class='ipt-btn'>插入</div></div> </div>"
                     );
                     $ipt.css('width', '300px');
-                    console.log($($ipt));
                     $iptctn.append($ipt);
                     $elem.append($iptctn);
                     $('.ipt-close').on('click', function () {
@@ -651,8 +693,92 @@
             }
         }
     };
+	//中横线
+	function Through(Leditor) {
+		this.Leditor = Leditor;
+		this.$elem = $('#strikeThrough');
+		this.type = "click";
+		//激活判断
+		this._active = false;
+	};
+	Through.prototype = {
+		constructor: Through,
+		onClick: function onClick(e) {
+			var Leditor = this.Leditor;
+			var isEmptySelection = Leditor.selection.isEmptyRange();
+			//空选区
+			if (isEmptySelection) {
+				//插入并选中空白
+				Leditor.selection.creatEmptyRange();
+			}
+			Leditor.cmd.do('strikeThrough');
+			if (isEmptySelection) {
+				Leditor.selection.collapseRange();
+				Leditor.selection.reSelection();
+				return;
+			}
+			if (checkEmpty(Leditor)) {
+				Leditor.selection.collapseRange();
+				Leditor.selection.reSelection();
+			}
+		},
+		//修改Active状态
+		changeActive: function changeActive() {
+			var Leditor = this.Leditor;
+			var $elem = this.$elem;
+			if (Leditor.cmd.queryCommandState('strikeThrough')) {
+				this._active = true;
+				$elem.addClass('nav-active');
+			} else {
+				this._active = false;
+				$elem.removeClass('nav-active');
+			}
+		}
+	};
+	//下划线
+	function Under(Leditor) {
+		this.Leditor = Leditor;
+		this.$elem = $('#underline');
+		this.type = "click";
+		//激活判断
+		this._active = false;
+	};
+	Under.prototype = {
+		constructor: Under,
+		onClick: function onClick(e) {
+			var Leditor = this.Leditor;
+			var isEmptySelection = Leditor.selection.isEmptyRange();
+			//空选区
+			if (isEmptySelection) {
+				//插入并选中空白
+				Leditor.selection.creatEmptyRange();
+			}
+			Leditor.cmd.do('underline');
+			if (isEmptySelection) {
+				Leditor.selection.collapseRange();
+				Leditor.selection.reSelection();
+				return;
+			}
+			if (checkEmpty(Leditor)) {
+				Leditor.selection.collapseRange();
+				Leditor.selection.reSelection();
+			}
+		},
+		//修改Active状态
+		changeActive: function changeActive() {
+			var Leditor = this.Leditor;
+			var $elem = this.$elem;
+			if (Leditor.cmd.queryCommandState('Under')) {
+				this._active = true;
+				$elem.addClass('nav-active');
+			} else {
+				this._active = false;
+				$elem.removeClass('nav-active');
+			}
+		}
+	};
     //标题
-
+	
     function Head(Leditor) {
         this.Leditor = Leditor;
         this.$elem = $('#formatBlock');
@@ -684,7 +810,6 @@
             var Leditor = this.Leditor;
             var $elem = this.$elem;
             var cmdValue = Leditor.cmd.queryCommandValue('formatBlock');
-            console.log(cmdValue);
             var reg = /^h/i; //以h开头的不区分大小写
             if (reg.test(cmdValue)) {
                 this._active = true;
@@ -875,6 +1000,7 @@
     function interator(oParent) {
         //多行选中有子节点，提取子节点值加以处理
         //单行选中直接提取选中节点值
+		$htmlStr = "";
         if (oParent.hasChildNodes()) {
             for (var oNode = oParent.firstChild; oNode; oNode = oNode.nextSibling) {
                 if (oNode.innerText != null) {
@@ -887,6 +1013,60 @@
         } else $htmlStr = oParent.innerText.replace(/\u200b/gm, '');
         return;
     }
+	//引用段
+	function Quote(Leditor){
+		this.Leditor = Leditor;
+		this.type = 'click';
+	};
+	Quote.prototype = {
+		constructor: Quote,
+		//直接标注整行
+		onClick: function onClick(e){
+			var Leditor = this.Leditor;
+			var range = Leditor.selection.getRange();
+			var $selectionElem = Leditor.selection.getRangeElem();
+			var $ElemParentList = $selectionElem.parents();
+			if ($selectionElem.nodeName === "blockquote") {
+				this.reMove($selectionElem);
+				return;
+			}
+			for (var i = 0; i < $ElemParentList.length; i++) {
+				if ($ElemParentList[i].nodeName === "blockquote") {
+					this.reMove($selectionElem);
+					return;
+				}
+			}
+			var $BlockQuote = $("<blockquote><br></blockquote>");
+			$BlockQuote.insertAfter($selectionElem);
+		},
+		reMove: function reMove($elem){
+			var Leditor = this.Leditor;
+			var range = Leditor.selection.getRange();
+			$($elem).unwarp();
+			$($elem).wrap("<p></p>");
+		}
+	}
+	//分割线
+	function Line(Leditor){
+		this.Leditor = Leditor;
+		this.type = 'click';
+	}
+	Line.prototype = {
+		constructor: Line,
+		onClick: function onClick(e){
+			var Leditor = this.Leditor;
+			var range = Leditor.selection.getRange();
+			var $selectionElem = Leditor.selection.getRangeElem();
+			var $line = $("<div class='article-line'></div>");
+			$line.insertAfter($selectionElem);
+			//空p
+			var $p = $("<p><br></p>");
+			//在节点后添加一个空白P
+			$p.insertAfter($line);
+			Leditor.selection.creatElemRange($p, true);
+			Leditor.selection.reSelection();
+		}
+	}
     //代码段
     //记录顶级pre节点
     var $topParent = void 0;
@@ -899,7 +1079,6 @@
     Code.prototype = {
         constructor: Code,
         onClick: function onClick(e) {
-            console.log(1);
 
             var Leditor = this.Leditor;
             var $elem = this.$elem;
@@ -908,8 +1087,8 @@
             var $startSelection = Leditor.selection.getRange().startContainer;
             var $endSelection = Leditor.selection.getRange().endContainer;
             var $selectionText = Leditor.selection.getText();
-            var isSeleEmpty = editor.selection.isEmptyRange();
-            var $selectionElem = editor.selection.getRangeElem();
+            var isSeleEmpty = Leditor.selection.isEmptyRange();
+            var $selectionElem = Leditor.selection.getRangeElem();
             //console.log($selectionElem);
             var $ElemParentList = $selectionElem.parents();
             //避免<pre><code><code></pre><code><code>的情况,拒绝跨元素直接处理
@@ -936,16 +1115,25 @@
                 range.deleteContents();
                 //在range处插入处理后的html
                 $html = this._changeHTML($rangeHTML);
-                console.log($html);
+                //console.log($html);
                 range.insertNode($html[0]);
                 //储存top父节点
                 $topParent = $html[0];
                 return;
             }
             //选区为空,插入<pre><code>
+			if ($selectionElem.nodeName === "CODE" || $selectionElem.nodeName === "PRE") {
+				return;
+			}
+			for (var i = 0; i < $ElemParentList.length; i++) {
+				if ($ElemParentList[i].nodeName === "CODE" || $ElemParentList[i].nodeName === "PRE") {
+					return;
+				}
+			}
             var $PreCode = $("<pre><code><br></code></pre>");
             $topParent = $PreCode;
-            range.insertNode($PreCode[0]);
+			$PreCode.insertAfter($selectionElem);
+            //range.insertNode($PreCode[0]);
         },
         //这里实际上应当取消标签样式，并解除P标签，并入CODE
         _changeHTML: function _changeHTML($html) {
@@ -960,7 +1148,7 @@
             }*/
             //console.log($html);
             interator($html);
-            //console.log($htmlStr);
+            console.log($htmlStr);
             //单节点情况下，注意type为text的range无法用innerText抽出值
             if ($htmlStr == "") {
                 $htmlStr = $html.textContent;
@@ -973,7 +1161,6 @@
             //$Code[0].innerText = str;
             console.log($Code);*/
             $Pre.append($Code);
-
             return $Pre;
         }
     };
@@ -1245,7 +1432,6 @@
                 if (Leditor.checkCode === true) {
                     var $p = $("<p><br></p>");
                     //在top节点后添加一个空白P
-                    console.log($topParent);
                     $p.insertAfter($topParent);
                     Leditor.selection.creatElemRange($p, true);
                     Leditor.selection.reSelection();
@@ -1280,7 +1466,6 @@
                     //code行下特殊鉴定
                     codeCreat(e);
                     //两次连续回车准备跳出代码块
-                    console.log(1);
                     Leditor.checkCode = true;
                 }
             });
@@ -1344,7 +1529,6 @@
             $editor.on('click', 'img', function () {
                 var $img = $(this);
 				var $changeDiv = _this.$changeDiv;
-				console.log($img);
                 //记录被选中的img
                 $editor._selectedImg = $img;
 				//初始化框选
@@ -1362,7 +1546,6 @@
             });
             $editor.on('click keyup',function (e) {
                 //是否点击图片
-                console.log(1);
                 if (e.target.nodeName === 'IMG') {
                     return;
                 }
@@ -1410,7 +1593,6 @@
 			});
 			//事件绑定
 			$('.pic-changeHandle0').on('mousedown',function(e){
-				console.log(e);
 				//记录初始x,y值
 				//y往外拉是增大，往内拉是减小
 				//x相反
@@ -1634,11 +1816,9 @@
                 if (range.startContainer === range.endContainer) {
                     if (range.startOffset === range.endOffset) {
                         if (range.commonAncestorContainer.nodeType == 1) {
-                            console.log(1);
                             for (var i = 0; i < range.commonAncestorContainer.children.length; i++) {
                                 var $childElem = range.commonAncestorContainer.children[i];
                                 if ($childElem.nodeName === "SPAN" && $childElem.innerHTML == "") {
-                                    console.log(range);
                                     return false;
                                 }
                             }
@@ -1671,10 +1851,6 @@
                             return false;
                         }
                         //}
-
-                        console.log(range.commonAncestorContainer.innerText[0].charCodeAt());
-
-                        console.log(range);
                         return true;
 
                     }
@@ -1778,7 +1954,6 @@
             //该问题致使无法同时在空白状态使用某些需要添加空白选区的操作
             //已解决
             Leditor.selection.saveRange();
-            console.log(Leditor.selection.getRange());
             Leditor.selection.reSelection();
             //这里Editor发生了改变(TIP)
         },
@@ -1843,6 +2018,10 @@
     navChooseConstructor.align = Align;
     navChooseConstructor.link = Link;
     navChooseConstructor.pic = Pic;
+	navChooseConstructor.Through = Through;
+	navChooseConstructor.Quote = Quote;
+	navChooseConstructor.Line = Line;
+	navChooseConstructor.Under = Under;
     //-----
     //判断下拉菜单的加载情况
     hoverCheck = [];
@@ -1866,6 +2045,8 @@
     hoverCheck.pic = false;
     //图片修改
     hoverCheck.picchange = false;
+	//工具条
+	hoverCheck.pencil = false;
     //-----
     //判断下拉菜单的display情况
     hoverDisplay = [];
@@ -1879,6 +2060,7 @@
     hoverDisplay.link = false;
     hoverDisplay.pic = false;
     hoverDisplay.picchange = false;
+	hoverDisplay.pencil = false;
     //构造nav
     function Nav(Leditor) {
         this.Leditor = Leditor;
@@ -1918,7 +2100,6 @@
                     var chooseFn = new navChooseConstructor[chooseId](Leditor);
                     //判断是否为输入框
                     //除了i标签与menu-icon之外的所有都return
-                    console.log(e);
                     if (e.target.parentNode.className !== "menu-icon" && e.target.nodeName !== "I") {
                         if (e.target.className !== "menu-icon") {
                             return;
@@ -2016,6 +2197,28 @@
                 });
                 $($menu[i]).on("mouseenter", function (e) {
                     var chooseId = this.firstElementChild.id;
+					//工具条独特加载
+					if(chooseId == "pencil"){
+						//已被加载触发显示
+						//未加载则加载
+						console.log(1);
+						if (hoverCheck[chooseId]) {
+							if (hoverDisplay[chooseId]) {
+								return;
+							}
+							//改变状态
+							hoverDisplay[chooseId] = true;
+							//得到$ul
+							var $ul = ListElem[chooseId];
+							$ul.css("display", "block");
+						} else {
+							var List = new chooseList(Leditor, $(this));
+							List._init();
+							hoverCheck[chooseId] = true;
+							hoverDisplay[chooseId] = true;
+						}
+						return;
+					}
                     if (!(typeof (navChooseConstructor[chooseId]) === "function")) {
                         return;
                     }
